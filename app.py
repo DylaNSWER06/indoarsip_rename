@@ -269,7 +269,7 @@ tab1, tab2 = st.tabs(["📋 Upload & Validasi Arsip", "✅ Preview & Proses Rena
 
 with tab1:
     st.markdown("### Upload & Validasi Data Arsip")
-    st.info("ℹ️ **Sistem Matching:** File akan dicocokkan berdasarkan kode angka (prefix matching). Contoh: `file_pelanggan_0336.pdf` akan cocok dengan data Excel yang diawali `0336-...`")
+    st.info("ℹ️ **Cara kerja:** Sistem bakal ngecek nomor di nama file terus cocokkin sama data Excel. Misalnya file `file_pelanggan_0001.pdf` bakal ketemu sama data yang mulai dari `0001-...`")
     st.markdown("---")
     
     col1, col2 = st.columns(2)
@@ -422,7 +422,7 @@ with tab1:
                                 })
                                 st.dataframe(unmatched_df, use_container_width=True)
                         
-                        st.info("✅ Data siap diproses. Silakan lanjut ke tab **Preview & Proses Rename**")
+                        st.info("✅ Data siap diproses. Lanjut ke tab **Preview & Proses Rename** ya")
                 
                 except Exception as e:
                     st.error(f"❌ Terjadi kesalahan: {str(e)}")
@@ -437,8 +437,8 @@ with tab2:
     st.markdown("---")
     
     if not st.session_state.validated:
-        st.warning("⚠️ **Silakan selesaikan validasi di Tab 1 terlebih dahulu**")
-        st.info("📋 Upload file arsip dan file Excel referensi, lalu klik tombol **Validasi & Cek Arsip**")
+        st.warning("⚠️ **Isi dulu validasi di Tab 1 ya**")
+        st.info("📋 Upload file arsip sama file Excel referensi dulu, terus klik tombol **Validasi & Cek Arsip**")
     else:
         # Display summary
         st.markdown("### 📊 Ringkasan Proses Rename")
@@ -488,7 +488,7 @@ with tab2:
                         
                         with download_col1:
                             st.markdown("#### 📦 Opsi 1: Download sebagai ZIP")
-                            st.info("Semua file akan dibundel dalam 1 file ZIP")
+                            st.info("Semua file jadi satu dalam ZIP")
                             
                             # Create ZIP for renamed files using the correct mapping
                             zip_buffer = create_zip_from_files(
@@ -507,12 +507,12 @@ with tab2:
                         
                         with download_col2:
                             st.markdown("#### 📄 Opsi 2: Download File Individual")
-                            st.info("Download file satu per satu dengan nama baru")
+                            st.info("Download satu-satu sesuai kebutuhan")
                         
                         # Show individual file download list DIRECTLY (no button needed)
                         st.markdown("---")
-                        st.markdown("### 📋 Daftar File untuk Download Individual")
-                        st.caption(f"Total {len(st.session_state.matched_files)} file tersedia untuk download")
+                        st.markdown("### 📋 Daftar File yang Bisa Didownload")
+                        st.caption(f"Total ada {len(st.session_state.matched_files)} file")
                         
                         # Create scrollable container for file list
                         for idx, (old_path, new_name) in enumerate(st.session_state.rename_mapping.items(), 1):
@@ -548,8 +548,8 @@ with tab2:
                             col_report1, col_report2 = st.columns([2, 1])
                             
                             with col_report1:
-                                st.warning(f"⚠️ Terdapat **{len(st.session_state.unmatched_files)} file** yang tidak cocok dengan data referensi")
-                                st.caption("File-file ini tidak akan direname dan tercatat dalam laporan Excel")
+                                st.warning(f"⚠️ Ada **{len(st.session_state.unmatched_files)} file** yang nggak cocok sama data referensi")
+                                st.caption("File-file ini nggak akan direname dan udah dicatat di laporan Excel")
                             
                             with col_report2:
                                 # Create Excel report for unmatched files
@@ -565,7 +565,7 @@ with tab2:
                                     use_container_width=True
                                 )
                         else:
-                            st.success("✅ Semua file berhasil cocok dengan data referensi!")
+                            st.success("✅ Semua file berhasil cocok! Mantap")
                     
                     except Exception as e:
                         st.error(f"❌ Terjada kesalahan saat proses rename: {str(e)}")
