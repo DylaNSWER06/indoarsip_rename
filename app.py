@@ -279,7 +279,7 @@ tab1, tab2 = st.tabs(["📋 Upload & Validasi Arsip", "✅ Preview & Proses Rena
 
 with tab1:
     st.markdown("### Upload & Validasi Data Arsip")
-    st.info("ℹ️ **Cara kerja:** Sistem bakal ngecek nomor di nama file terus cocokkin sama data Excel. Misalnya file `file_pelanggan_0336.pdf` bakal ketemu sama data yang mulai dari `0336-...`")
+    st.info("ℹ️ **Cara kerja:** Sistem bakal ngecek nomor di nama file terus cocokkin sama data Excel. Misalnya file `file_pelanggan_0001.pdf` bakal ketemu sama data yang mulai dari `0001-...`")
     st.markdown("---")
     
     col1, col2 = st.columns(2)
