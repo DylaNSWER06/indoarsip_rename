@@ -162,12 +162,22 @@ def extract_zip(zip_file):
     return temp_dir
 
 def get_files_from_directory(directory):
-    """Get all files from directory (non-recursive)"""
+    """Get all files from directory (including subdirectories)"""
     files = []
-    for item in os.listdir(directory):
-        item_path = os.path.join(directory, item)
-        if os.path.isfile(item_path):
-            files.append(item_path)
+    for root, dirs, filenames in os.walk(directory):
+        # Skip __MACOSX and other system directories
+        dirs[:] = [d for d in dirs if not d.startswith('.') and d != '__MACOSX']
+        
+        for filename in filenames:
+            # Skip hidden files, system files, and macOS metadata
+            if (not filename.startswith('.') and 
+                not filename.startswith('__') and
+                filename != '.DS_Store' and
+                not root.endswith('__MACOSX')):
+                file_path = os.path.join(root, filename)
+                # Double check it's actually a file
+                if os.path.isfile(file_path):
+                    files.append(file_path)
     return files
 
 def extract_code_from_filename(filename):
@@ -269,7 +279,7 @@ tab1, tab2 = st.tabs(["📋 Upload & Validasi Arsip", "✅ Preview & Proses Rena
 
 with tab1:
     st.markdown("### Upload & Validasi Data Arsip")
-    st.info("ℹ️ **Cara kerja:** Sistem bakal ngecek nomor di nama file terus cocokkin sama data Excel. Misalnya file `file_pelanggan_0001.pdf` bakal ketemu sama data yang mulai dari `0001-...`")
+    st.info("ℹ️ **Cara kerja:** Sistem bakal ngecek nomor di nama file terus cocokkin sama data Excel. Misalnya file `file_pelanggan_0336.pdf` bakal ketemu sama data yang mulai dari `0336-...`")
     st.markdown("---")
     
     col1, col2 = st.columns(2)
@@ -286,14 +296,24 @@ with tab1:
             zip_file = st.file_uploader(
                 "Upload file ZIP yang berisi arsip",
                 type=['zip'],
-                key="zip_uploader"
+                key="zip_uploader",
+                help="Hanya file ZIP yang bisa diupload di sini"
             )
         else:
             uploaded_files = st.file_uploader(
-                "Upload multiple files arsip",
+                "Upload multiple files arsip (BUKAN ZIP)",
                 accept_multiple_files=True,
-                key="files_uploader"
+                key="files_uploader",
+                help="Upload file individual, bukan file ZIP. Untuk ZIP gunakan opsi di atas."
             )
+            
+            # Check if user uploaded ZIP in wrong option
+            if uploaded_files:
+                zip_files_found = [f for f in uploaded_files if f.name.lower().endswith('.zip')]
+                if zip_files_found:
+                    st.error(f"❌ **File ZIP terdeteksi: {', '.join([f.name for f in zip_files_found])}**")
+                    st.warning("⚠️ Untuk upload file ZIP, gunakan opsi **'File ZIP Arsip'** di atas ya!")
+                    uploaded_files = None  # Reset uploaded files
     
     with col2:
         st.markdown("#### 2️⃣ Upload File Referensi Excel")
@@ -318,8 +338,14 @@ with tab1:
         
         if upload_type == "File ZIP Arsip" and not zip_file:
             errors.append("File ZIP arsip belum diupload")
-        elif upload_type == "Folder Arsip (Multiple Files)" and not uploaded_files:
-            errors.append("File arsip belum diupload")
+        elif upload_type == "Folder Arsip (Multiple Files)":
+            if not uploaded_files:
+                errors.append("File arsip belum diupload")
+            else:
+                # Check if user uploaded ZIP files in multiple files mode
+                zip_files_found = [f.name for f in uploaded_files if f.name.lower().endswith('.zip')]
+                if zip_files_found:
+                    errors.append(f"File ZIP tidak bisa diupload di opsi Multiple Files! Gunakan opsi 'File ZIP Arsip' untuk: {', '.join(zip_files_found)}")
         
         if not excel_file:
             errors.append("File Excel referensi belum diupload")
@@ -338,6 +364,41 @@ with tab1:
                     if upload_type == "File ZIP Arsip":
                         temp_dir = extract_zip(zip_file)
                         file_list = get_files_from_directory(temp_dir)
+                        
+                        if len(file_list) == 0:
+                            st.error("❌ **ZIP kosong atau tidak ada file yang valid!**")
+                            st.warning("🔍 **Kemungkinan penyebab:**")
+                            st.markdown("""
+                            - ZIP kosong (tidak ada file)
+                            - Semua file adalah hidden files (diawali titik)
+                            - File berada dalam folder `__MACOSX` (metadata macOS)
+                            - Coba extract manual dulu untuk mengecek isi ZIP
+                            """)
+                            
+                            # Debug info: show what's in temp_dir
+                            all_items = []
+                            for root, dirs, files in os.walk(temp_dir):
+                                for f in files:
+                                    all_items.append(os.path.join(root, f))
+                            
+                            if all_items:
+                                with st.expander("🐛 Debug: Lihat semua item yang di-extract (termasuk hidden files)"):
+                                    st.code('\n'.join([os.path.basename(item) for item in all_items]))
+                            
+                            st.session_state.validated = False
+                            continue_validation = False
+                        else:
+                            # Show extracted files info
+                            st.info(f"📦 **ZIP berhasil di-extract!** Ditemukan {len(file_list)} file")
+                            with st.expander("📂 Lihat file hasil extract dari ZIP"):
+                                extracted_df = pd.DataFrame({
+                                    'No': list(range(1, len(file_list) + 1)),
+                                    'Nama File': [os.path.basename(f) for f in file_list],
+                                    'Lokasi': [os.path.relpath(f, temp_dir) for f in file_list],
+                                    'Ukuran': [f"{os.path.getsize(f) / 1024:.2f} KB" for f in file_list]
+                                })
+                                st.dataframe(extracted_df, use_container_width=True)
+                            continue_validation = True
                     else:
                         temp_dir = tempfile.mkdtemp()
                         file_list = []
@@ -346,83 +407,89 @@ with tab1:
                             with open(file_path, 'wb') as f:
                                 f.write(uploaded_file.getbuffer())
                             file_list.append(file_path)
+                        
+                        st.info(f"📁 **File berhasil diupload!** Total {len(file_list)} file")
+                        continue_validation = True
                     
                     st.session_state.temp_dir = temp_dir
                     
-                    # Step 2: Read Excel and validate column
-                    df = pd.read_excel(excel_file)
-                    
-                    if reference_column not in df.columns:
-                        st.error(f"❌ Kolom '{reference_column}' tidak ditemukan dalam file Excel!")
-                        st.info(f"📋 Kolom yang tersedia: {', '.join(df.columns.tolist())}")
-                        st.session_state.validated = False
+                    if not continue_validation:
+                        pass  # Stop here, error already shown
                     else:
-                        # Step 3: Get reference values
-                        reference_values = df[reference_column].dropna().astype(str).tolist()
+                        # Step 2: Read Excel and validate column
+                        df = pd.read_excel(excel_file)
                         
-                        # Step 4: Match files
-                        matched, unmatched, rename_map = match_files_with_reference(
-                            file_list, reference_values
-                        )
-                        
-                        # Store in session state
-                        st.session_state.file_list = file_list
-                        st.session_state.reference_data = df
-                        st.session_state.matched_files = matched
-                        st.session_state.unmatched_files = unmatched
-                        st.session_state.rename_mapping = rename_map
-                        st.session_state.validated = True
-                        
-                        # Display results
-                        st.success("✅ **Validasi Berhasil!**")
-                        
-                        st.markdown("---")
-                        st.markdown("### 📊 Ringkasan Validasi Arsip")
-                        
-                        col_a, col_b, col_c = st.columns(3)
-                        
-                        with col_a:
-                            st.metric(
-                                label="Total Arsip",
-                                value=len(file_list),
-                                delta=None
+                        if reference_column not in df.columns:
+                            st.error(f"❌ Kolom '{reference_column}' tidak ditemukan dalam file Excel!")
+                            st.info(f"📋 Kolom yang tersedia: {', '.join(df.columns.tolist())}")
+                            st.session_state.validated = False
+                        else:
+                            # Step 3: Get reference values
+                            reference_values = df[reference_column].dropna().astype(str).tolist()
+                            
+                            # Step 4: Match files
+                            matched, unmatched, rename_map = match_files_with_reference(
+                                file_list, reference_values
                             )
-                        
-                        with col_b:
-                            st.metric(
-                                label="Arsip Cocok",
-                                value=len(matched),
-                                delta=f"{(len(matched)/len(file_list)*100):.1f}%" if file_list else "0%",
-                                delta_color="normal"
-                            )
-                        
-                        with col_c:
-                            st.metric(
-                                label="Arsip Tidak Cocok",
-                                value=len(unmatched),
-                                delta=f"{(len(unmatched)/len(file_list)*100):.1f}%" if file_list else "0%",
-                                delta_color="inverse"
-                            )
-                        
-                        # Detail information
-                        if matched:
-                            with st.expander(f"✅ Lihat {len(matched)} arsip yang cocok"):
-                                matched_df = pd.DataFrame({
-                                    'No': list(range(1, len(matched) + 1)),
-                                    'Nama File Asli': [os.path.basename(f) for f in matched],
-                                    'Kode Ekstrak': [extract_code_from_filename(os.path.basename(f)) for f in matched],
-                                    'Akan Direname Jadi': [rename_map[f] for f in matched]
-                                })
-                                st.dataframe(matched_df, use_container_width=True)
-                        
-                        if unmatched:
-                            with st.expander(f"⚠️ Lihat {len(unmatched)} arsip yang tidak cocok"):
-                                unmatched_df = pd.DataFrame({
-                                    'Nama File': [os.path.basename(f) for f in unmatched]
-                                })
-                                st.dataframe(unmatched_df, use_container_width=True)
-                        
-                        st.info("✅ Data siap diproses. Lanjut ke tab **Preview & Proses Rename** ya")
+                            
+                            # Store in session state
+                            st.session_state.file_list = file_list
+                            st.session_state.reference_data = df
+                            st.session_state.matched_files = matched
+                            st.session_state.unmatched_files = unmatched
+                            st.session_state.rename_mapping = rename_map
+                            st.session_state.validated = True
+                            
+                            # Display results
+                            st.success("✅ **Validasi Berhasil!**")
+                            
+                            st.markdown("---")
+                            st.markdown("### 📊 Ringkasan Validasi Arsip")
+                            
+                            col_a, col_b, col_c = st.columns(3)
+                            
+                            with col_a:
+                                st.metric(
+                                    label="Total Arsip",
+                                    value=len(file_list),
+                                    delta=None
+                                )
+                            
+                            with col_b:
+                                st.metric(
+                                    label="Arsip Cocok",
+                                    value=len(matched),
+                                    delta=f"{(len(matched)/len(file_list)*100):.1f}%" if file_list else "0%",
+                                    delta_color="normal"
+                                )
+                            
+                            with col_c:
+                                st.metric(
+                                    label="Arsip Tidak Cocok",
+                                    value=len(unmatched),
+                                    delta=f"{(len(unmatched)/len(file_list)*100):.1f}%" if file_list else "0%",
+                                    delta_color="inverse"
+                                )
+                            
+                            # Detail information
+                            if matched:
+                                with st.expander(f"✅ Lihat {len(matched)} arsip yang cocok"):
+                                    matched_df = pd.DataFrame({
+                                        'No': list(range(1, len(matched) + 1)),
+                                        'Nama File Asli': [os.path.basename(f) for f in matched],
+                                        'Kode Ekstrak': [extract_code_from_filename(os.path.basename(f)) for f in matched],
+                                        'Akan Direname Jadi': [rename_map[f] for f in matched]
+                                    })
+                                    st.dataframe(matched_df, use_container_width=True)
+                            
+                            if unmatched:
+                                with st.expander(f"⚠️ Lihat {len(unmatched)} arsip yang tidak cocok"):
+                                    unmatched_df = pd.DataFrame({
+                                        'Nama File': [os.path.basename(f) for f in unmatched]
+                                    })
+                                    st.dataframe(unmatched_df, use_container_width=True)
+                            
+                            st.info("✅ Data siap diproses. Lanjut ke tab **Preview & Proses Rename** ya")
                 
                 except Exception as e:
                     st.error(f"❌ Terjadi kesalahan: {str(e)}")
