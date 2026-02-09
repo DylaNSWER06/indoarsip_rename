@@ -149,6 +149,10 @@ if 'rename_mapping' not in st.session_state:
     st.session_state.rename_mapping = {}
 if 'show_individual_files' not in st.session_state:
     st.session_state.show_individual_files = False
+if 'file_contents_cache' not in st.session_state:
+    st.session_state.file_contents_cache = {}
+if 'show_download_section' not in st.session_state:
+    st.session_state.show_download_section = False
 
 # ============================================================================
 # UTILITY FUNCTIONS
@@ -543,6 +547,16 @@ with tab2:
                         # st.session_state.rename_mapping format:
                         # {old_file_path: new_filename_with_extension}
                         
+                        # Cache file contents for download buttons
+                        # This ensures downloads work even after Streamlit reruns
+                        if 'file_contents_cache' not in st.session_state:
+                            st.session_state.file_contents_cache = {}
+                        
+                        for old_path, new_name in st.session_state.rename_mapping.items():
+                            if new_name not in st.session_state.file_contents_cache:
+                                with open(old_path, 'rb') as f:
+                                    st.session_state.file_contents_cache[new_name] = f.read()
+                        
                         st.success("✅ **Proses Rename Selesai!**")
                         st.balloons()
                         
@@ -576,66 +590,73 @@ with tab2:
                             st.markdown("#### 📄 Opsi 2: Download File Individual")
                             st.info("Download satu-satu sesuai kebutuhan")
                         
-                        # Show individual file download list DIRECTLY (no button needed)
-                        st.markdown("---")
-                        st.markdown("### 📋 Daftar File yang Bisa Didownload")
-                        st.caption(f"Total ada {len(st.session_state.matched_files)} file")
-                        
-                        # Create scrollable container for file list
-                        for idx, (old_path, new_name) in enumerate(st.session_state.rename_mapping.items(), 1):
-                            with st.container():
-                                col_file, col_btn = st.columns([3, 1])
-                                
-                                with col_file:
-                                    st.markdown(f"**{idx}.** `{new_name}`")
-                                    st.caption(f"Original: {os.path.basename(old_path)}")
-                                
-                                with col_btn:
-                                    # Read file content
-                                    with open(old_path, 'rb') as f:
-                                        file_content = f.read()
-                                    
-                                    st.download_button(
-                                        label="⬇️ Download",
-                                        data=file_content,
-                                        file_name=new_name,
-                                        mime="application/octet-stream",
-                                        key=f"download_individual_{idx}",
-                                        use_container_width=True
-                                    )
-                            
-                            if idx < len(st.session_state.rename_mapping):
-                                st.divider()
-                        
-                        # Excel report section (always available)
-                        st.markdown("---")
-                        st.markdown("### 📊 Laporan File Tidak Cocok")
-                        
-                        if st.session_state.unmatched_files:
-                            col_report1, col_report2 = st.columns([2, 1])
-                            
-                            with col_report1:
-                                st.warning(f"⚠️ Ada **{len(st.session_state.unmatched_files)} file** yang nggak cocok sama data referensi")
-                                st.caption("File-file ini nggak akan direname dan udah dicatat di laporan Excel")
-                            
-                            with col_report2:
-                                # Create Excel report for unmatched files
-                                excel_buffer = create_unmatched_report(
-                                    st.session_state.unmatched_files
-                                )
-                                
-                                st.download_button(
-                                    label="📄 Download Laporan Excel",
-                                    data=excel_buffer,
-                                    file_name="INDOARSIP_Laporan_Tidak_Cocok.xlsx",
-                                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                    use_container_width=True
-                                )
-                        else:
-                            st.success("✅ Semua file berhasil cocok! Mantap")
+                        # Mark that download section should be shown
+                        st.session_state.show_download_section = True
                     
                     except Exception as e:
-                        st.error(f"❌ Terjada kesalahan saat proses rename: {str(e)}")
+                        st.error(f"❌ Terjadi kesalahan saat proses rename: {str(e)}")
+            
+            # Show download section if rename has been processed
+            if st.session_state.get('show_download_section', False):
+                # Show individual file download list
+                st.markdown("---")
+                st.markdown("### 📋 Daftar File yang Bisa Didownload")
+                st.caption(f"Total ada {len(st.session_state.matched_files)} file")
+                
+                # Create scrollable container for file list
+                for idx, (old_path, new_name) in enumerate(st.session_state.rename_mapping.items(), 1):
+                    with st.container():
+                        col_file, col_btn = st.columns([3, 1])
+                        
+                        with col_file:
+                            st.markdown(f"**{idx}.** `{new_name}`")
+                            st.caption(f"Original: {os.path.basename(old_path)}")
+                        
+                        with col_btn:
+                            # Get file content from cache
+                            file_content = st.session_state.file_contents_cache.get(new_name)
+                            
+                            if file_content:
+                                st.download_button(
+                                    label="⬇️ Download",
+                                    data=file_content,
+                                    file_name=new_name,
+                                    mime="application/octet-stream",
+                                    key=f"download_individual_{idx}",
+                                    use_container_width=True
+                                )
+                            else:
+                                st.error("❌ File tidak tersedia")
+                    
+                    if idx < len(st.session_state.rename_mapping):
+                        st.divider()
+                
+                # Excel report section (always available)
+                st.markdown("---")
+                st.markdown("### 📊 Laporan File Tidak Cocok")
+                
+                if st.session_state.unmatched_files:
+                    col_report1, col_report2 = st.columns([2, 1])
+                    
+                    with col_report1:
+                        st.warning(f"⚠️ Ada **{len(st.session_state.unmatched_files)} file** yang nggak cocok sama data referensi")
+                        st.caption("File-file ini nggak akan direname dan udah dicatat di laporan Excel")
+                    
+                    with col_report2:
+                        # Create Excel report for unmatched files
+                        excel_buffer = create_unmatched_report(
+                            st.session_state.unmatched_files
+                        )
+                        
+                        st.download_button(
+                            label="📄 Download Laporan Excel",
+                            data=excel_buffer,
+                            file_name="INDOARSIP_Laporan_Tidak_Cocok.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            use_container_width=True
+                        )
+                else:
+                    st.success("✅ Semua file berhasil cocok! Mantap")
         else:
             st.warning("⚠️ Tidak ada arsip yang cocok untuk direname")
 
