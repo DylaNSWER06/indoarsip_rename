@@ -61,12 +61,13 @@ st.markdown("""
         padding: 0.5rem;
         border-radius: 8px;
     }
-    .stTabs [data-baseweb="tab"] {
+    .stTabs [data-baseweb="tab"] p {
         background-color: white;
         border-radius: 6px;
         padding: 0.75rem 1.5rem;
-        font-weight: 600;
+        font-weight: 700 !important;
         border: 2px solid transparent;
+        color: #1e3c72 !important;
     }
     .stTabs [aria-selected="true"] {
         background-color: #2a5298;
