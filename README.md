@@ -42,7 +42,7 @@ Lalu buka folder `indoarsip_rename` di VS Code.
 
 ---
 
-### Langkah selanjutnya (sama untuk kedua opsi)
+### Langkah selanjutnya di Terminal VS Code (sama untuk kedua opsi) 
 
 #### 1. Buat virtual environment
 ```bash
