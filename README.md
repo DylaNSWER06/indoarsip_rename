@@ -18,18 +18,38 @@ Aplikasi web untuk rename file arsip secara batch berdasarkan data referensi Exc
 
 ## 🚀 Cara Install & Run
 
-### 1. Clone repository
+Ada 2 cara untuk mendapatkan file project ini:
+
+---
+
+### 🅰️ Opsi 1: Menggunakan Git (punya GitHub)
+
+#### 1. Clone repository
 ```bash
 git clone https://github.com/DylaNSWER06/indoarsip_rename.git
-cd indoarsip_rename
 ```
+Lalu buka folder `indoarsip_rename` di VS Code.
 
-### 2. Buat virtual environment
+---
+
+### 🅱️ Opsi 2: Download ZIP (tanpa GitHub)
+
+1. Buka [https://github.com/DylaNSWER06/indoarsip_rename](https://github.com/DylaNSWER06/indoarsip_rename)
+2. Klik tombol hijau **"Code"**
+3. Klik **"Download ZIP"**
+4. Extract ZIP nya
+5. Buka folder hasil extract di VS Code
+
+---
+
+### Langkah selanjutnya (sama untuk kedua opsi)
+
+#### 1. Buat virtual environment
 ```bash
 python -m venv venv
 ```
 
-### 3. Aktifkan virtual environment
+#### 2. Aktifkan virtual environment
 ```bash
 # Windows
 venv\Scripts\activate
@@ -38,12 +58,12 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-### 4. Install dependencies
+#### 3. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Jalankan aplikasi
+#### 4. Jalankan aplikasi
 ```bash
 streamlit run app.py
 ```
