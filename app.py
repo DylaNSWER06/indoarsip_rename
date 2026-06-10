@@ -1,9 +1,6 @@
 """
 INDOARSIP - Sistem Otomatis Penamaan Arsip Digital
 Batch File Renaming System based on Excel Reference
-
-Author: Claude AI
-Company: INDOARSIP
 """
 
 import streamlit as st
