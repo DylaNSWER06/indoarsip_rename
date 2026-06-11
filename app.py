@@ -49,12 +49,10 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     * { font-family: 'Inter', sans-serif; }
 
-    /* ── Reduce Streamlit default padding ── */
     .block-container { padding-top: 0.75rem !important; padding-bottom: 1rem !important; }
     .stMarkdown p { margin-bottom: 0.3rem !important; }
     hr { margin: 0.5rem 0 !important; }
 
-    /* ── Main header ── */
     .main-header {
         background: linear-gradient(135deg, #0f2554 0%, #1e3c72 60%, #2a5298 100%);
         padding: 0.9rem 1.5rem; border-radius: 8px; margin-bottom: 0.75rem;
@@ -73,7 +71,6 @@ st.markdown("""
         display: inline-block; letter-spacing: 0.8px; border: 1px solid rgba(255,255,255,0.2);
     }
 
-    /* ── Sidebar ── */
     [data-testid="stSidebar"] {
         background: linear-gradient(180deg, #0f2554 0%, #1e3c72 100%) !important;
     }
@@ -121,7 +118,6 @@ st.markdown("""
     .sidebar-divider { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 1rem 0; }
     .sidebar-footer  { font-size: 0.72rem; color: #7096c4 !important; text-align: center; padding: 0.5rem; }
 
-    /* ── Tabs ── */
     .stTabs [data-baseweb="tab-list"] {
         gap: 6px; background-color: #f0f4fb; padding: 0.3rem;
         border-radius: 8px; border: 1px solid #dce6f7;
@@ -137,14 +133,12 @@ st.markdown("""
     }
     .stTabs [aria-selected="true"] p { color: white !important; font-weight: 700 !important; }
 
-    /* ── Section card ── */
     .section-card {
         background: white; border-radius: 8px; padding: 0.5rem 0.75rem;
         border: 1px solid #e8eef7; box-shadow: 0 1px 4px rgba(0,0,0,0.04); margin-bottom: 0.4rem;
     }
     .section-title { font-size: 0.85rem; font-weight: 700; color: #1e3c72; margin: 0; }
 
-    /* ── Input & uploader border ── */
     [data-testid="stFileUploader"] {
         border: 2px solid #c7d7f7 !important;
         border-radius: 8px !important;
@@ -175,7 +169,6 @@ st.markdown("""
         background: #f8faff;
     }
 
-    /* ── Info banner ── */
     .info-banner {
         background: linear-gradient(135deg, #eff6ff, #dbeafe);
         border: 1px solid #93c5fd; border-left: 3px solid #2a5298;
@@ -183,7 +176,6 @@ st.markdown("""
         font-size: 0.78rem; color: #1e40af;
     }
 
-    /* ── Alert box ── */
     .alert-box {
         border-radius: 8px; padding: 0.75rem 1rem; margin: 0.4rem 0;
         display: flex; align-items: flex-start; gap: 0.75rem;
@@ -196,7 +188,6 @@ st.markdown("""
     .alert-text.error   { color: #b91c1c; }
     .alert-text.warning { color: #92400e; }
 
-    /* ── Metric cards ── */
     .metric-row { display: flex; gap: 0.75rem; margin: 0.75rem 0; }
     .metric-card {
         flex: 1; background: white; border-radius: 10px; padding: 0.9rem 1rem;
@@ -211,7 +202,6 @@ st.markdown("""
     .metric-card.nomatch .metric-value { color: #dc2626; }
     .metric-sub { font-size: 0.72rem; color: #9ca3af; }
 
-    /* ── Success notification ── */
     .success-notification {
         background: linear-gradient(135deg, #f0fdf4, #dcfce7);
         border: 1px solid #86efac; border-left: 5px solid #16a34a;
@@ -232,14 +222,12 @@ st.markdown("""
     .success-title    { font-size: 0.95rem; font-weight: 700; color: #15803d; margin: 0; }
     .success-subtitle { font-size: 0.82rem; color: #166534; margin: 0.2rem 0 0 0; }
 
-    /* ── Download card ── */
     .download-card {
         background: white; border-radius: 10px; padding: 1.25rem;
         border: 1px solid #e8eef7; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     .download-card h4 { color: #1e3c72; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
 
-    /* ── File list ── */
     .file-item {
         background: #f8faff; border-radius: 8px; padding: 0.6rem 0.9rem;
         border: 1px solid #e8eef7; margin-bottom: 0.4rem;
@@ -247,7 +235,6 @@ st.markdown("""
     .file-name     { font-weight: 600; color: #1e3c72; font-size: 0.88rem; }
     .file-original { font-size: 0.75rem; color: #9ca3af; }
 
-    /* ── Button ── */
     .stButton button {
         background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
         color: white; font-weight: 600; padding: 0.5rem 1.5rem;
@@ -258,13 +245,11 @@ st.markdown("""
     }
     .stButton button:hover { box-shadow: 0 5px 12px rgba(30,60,114,0.3); transform: translateY(-1px); }
 
-    /* ── Empty state ── */
     .empty-state { text-align: center; padding: 2.5rem 2rem; color: #9ca3af; }
     .empty-state-icon  { font-size: 2.5rem; margin-bottom: 0.75rem; }
     .empty-state-title { font-size: 1rem; font-weight: 600; color: #6b7280; }
     .empty-state-sub   { font-size: 0.85rem; margin-top: 0.4rem; }
 
-    /* ── Footer ── */
     .footer {
         text-align: center; color: #9ca3af;
         padding: 1.5rem 0 0.75rem; border-top: 1px solid #f3f4f6; margin-top: 1.5rem;
@@ -396,15 +381,6 @@ with st.sidebar:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    if st.session_state.validated and st.session_state.active_tab == 0:
-        if st.button("▶  Lanjut ke Preview & Rename", use_container_width=True):
-            st.session_state.active_tab = 1
-            st.rerun()
-    elif st.session_state.active_tab == 1:
-        if st.button("◀  Kembali ke Upload", use_container_width=True):
-            st.session_state.active_tab = 0
-            st.rerun()
-
     if st.session_state.validated:
         total   = len(st.session_state.file_list)
         matched = len(st.session_state.matched_files)
@@ -413,12 +389,24 @@ with st.sidebar:
         rsc     = "green" if st.session_state.rename_done else ""
         rst     = "✓ Selesai" if st.session_state.rename_done else "Belum"
 
-        MAX_MB     = 200
-        total_mb   = st.session_state.get('uploaded_size_mb', 0)
-        size_pct   = min(total_mb / MAX_MB * 100, 100)
-        size_color = "green" if size_pct < 70 else ("" if size_pct < 90 else "red")
-        size_str   = f"{total_mb:.1f} MB / {MAX_MB} MB"
-        bar_color  = '#4ade80' if size_pct < 70 else ('#facc15' if size_pct < 90 else '#f87171')
+        WARN_MB   = 150
+        DANGER_MB = 300
+        total_mb  = st.session_state.get('uploaded_size_mb', 0)
+        size_pct  = min(total_mb / DANGER_MB * 100, 100)
+        bar_color = '#4ade80' if total_mb < WARN_MB else ('#facc15' if total_mb < DANGER_MB else '#f87171')
+
+        if total_mb < WARN_MB:
+            size_color  = "green"
+            size_status = "✅ Aman"
+            size_desc   = "Ukuran file dalam batas aman. Proses rename dapat berjalan normal di Streamlit Cloud."
+        elif total_mb < DANGER_MB:
+            size_color  = ""
+            size_status = "⚡ Hati-hati"
+            size_desc   = "Ukuran file mendekati batas aman. Aplikasi mungkin berjalan lebih lambat dari biasanya."
+        else:
+            size_color  = "red"
+            size_status = "⚠️ Berisiko"
+            size_desc   = "File terlalu besar untuk diproses di Streamlit Cloud. Aplikasi berisiko crash. Disarankan jalankan secara lokal."
 
         st.markdown(f"""
         <hr class="sidebar-divider">
@@ -442,15 +430,47 @@ with st.sidebar:
             </div>
             <div class="sidebar-stat-row">
                 <span class="sidebar-stat-label">Ukuran Upload</span>
-                <span class="sidebar-stat-value {size_color}">{size_str}</span>
+                <span class="sidebar-stat-value {size_color}">{total_mb:.1f} MB</span>
             </div>
         </div>
-        <div style="margin-top:0.4rem;">
-            <div style="font-size:0.65rem;color:#93b4e0;margin-bottom:0.3rem;">Penggunaan Storage</div>
-            <div style="background:rgba(255,255,255,0.15);border-radius:6px;height:6px;overflow:hidden;">
-                <div style="width:{size_pct:.1f}%;height:100%;background:{bar_color};border-radius:6px;"></div>
+
+        <div style="margin-top:0.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;">
+                <span style="font-size:0.65rem;color:#93b4e0;">Estimasi Beban Memori</span>
+                <span style="font-size:0.65rem;font-weight:700;color:{bar_color};">{size_status}</span>
             </div>
-            <div style="font-size:0.62rem;color:#93b4e0;margin-top:0.2rem;text-align:right;">{size_pct:.0f}% dari {MAX_MB}MB</div>
+            <div style="background:rgba(255,255,255,0.15);border-radius:6px;height:7px;overflow:hidden;">
+                <div style="width:{size_pct:.1f}%;height:100%;background:{bar_color};border-radius:6px;transition:width 0.4s ease;"></div>
+            </div>
+            <div style="font-size:0.62rem;color:#93b4e0;margin-top:0.25rem;text-align:right;">{total_mb:.1f} MB dari ~300 MB batas aman</div>
+        </div>
+
+        <div style="
+            background:rgba(255,255,255,0.07);
+            border:1px solid rgba(255,255,255,0.15);
+            border-left:3px solid {bar_color};
+            border-radius:8px;
+            padding:0.65rem 0.75rem;
+            margin-top:0.6rem;
+        ">
+            <div style="font-size:0.68rem;font-weight:700;color:white;margin-bottom:0.35rem;">
+                ℹ️ Kebijakan Ukuran File
+            </div>
+            <div style="font-size:0.63rem;color:#c7d7f7;line-height:1.5;">
+                {size_desc}
+            </div>
+            <div style="margin-top:0.4rem;border-top:1px solid rgba(255,255,255,0.1);padding-top:0.4rem;">
+                <div style="font-size:0.63rem;color:#93b4e0;line-height:1.6;">
+                    🟢 &lt; 150 MB — Aman untuk Cloud<br>
+                    🟡 150–300 MB — Hati-hati, bisa lambat<br>
+                    🔴 &gt; 300 MB — Gunakan mode <b>Lokal</b>
+                </div>
+            </div>
+            <div style="margin-top:0.4rem;border-top:1px solid rgba(255,255,255,0.1);padding-top:0.4rem;">
+                <div style="font-size:0.62rem;color:#7096c4;line-height:1.5;">
+                    💡 Tidak ada batas upload yang tetap di Streamlit Cloud, namun file besar menghabiskan RAM server (~1 GB). Jika aplikasi tiba-tiba berhenti, kurangi ukuran file atau jalankan secara lokal.
+                </div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -612,7 +632,7 @@ with tab1:
     st.markdown("##### 📂 Upload & Validasi Data Arsip")
     st.markdown("""
     <div class="info-banner">
-        ℹ️ <strong>Cara kerja:</strong> Kode numerik dari nama file dicocokkan dengan data Excel.
+        <strong>Cara kerja:</strong> Kode numerik dari nama file dicocokkan dengan data Excel.
         Contoh: <code>pelanggan_0001.pdf</code> → cocok dengan baris <code>0001-...</code>
     </div>
     """, unsafe_allow_html=True)
@@ -620,7 +640,7 @@ with tab1:
     col1, col2 = st.columns(2, gap="large")
 
     with col1:
-        st.markdown('<div class="section-card"><div class="section-title">1️⃣ &nbsp;File Arsip</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-card"><div class="section-title">1. File Arsip</div></div>', unsafe_allow_html=True)
         upload_type = st.radio("Pilih tipe upload:", ["File ZIP Arsip", "Folder Arsip (Multiple Files)"], key="upload_type")
         if upload_type == "File ZIP Arsip":
             zip_file = st.file_uploader("Upload file ZIP yang berisi arsip", type=['zip'], key="zip_uploader")
@@ -634,7 +654,7 @@ with tab1:
                     uploaded_files = None
 
     with col2:
-        st.markdown('<div class="section-card"><div class="section-title">2️⃣ &nbsp;File Referensi Excel</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-card"><div class="section-title">2. File Referensi Excel</div></div>', unsafe_allow_html=True)
         excel_file       = st.file_uploader("Upload file Excel referensi penamaan", type=['xlsx', 'xls'], key="excel_uploader")
         reference_column = st.text_input("Nama Kolom Referensi", placeholder="Contoh: Nomor_Arsip, Kode_Dokumen ...", key="ref_column")
 
